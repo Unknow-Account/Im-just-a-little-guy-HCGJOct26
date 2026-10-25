@@ -14,8 +14,8 @@ W to jump AND to get the ballon
 
 
 # Install
-Just open main.html for web version
-If there is a exe just open it.
+Just open index.html for web version
+If there is a main.zip open it, extract it, and launch game.exe
 
 # Creds/misc
 
