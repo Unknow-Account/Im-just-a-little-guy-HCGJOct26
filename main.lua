@@ -5,6 +5,8 @@ function love.load()
         love.graphics.newImage("assets/walk1.png"),
         love.graphics.newImage("assets/walk2.png")
     }
+    fallingimage = love.graphics.newImage("assets/falling.png")
+    fallingimage:setFilter("nearest","nearest")
     bgg = love.graphics.newImage("assets/bg1.png")
     bgg:setFilter("nearest","nearest")
     groundY = love.graphics.getHeight()- bgg:getHeight()*3
@@ -15,7 +17,10 @@ function love.load()
     playerX = 250
     playerY = 0
     playerWalkSpeed = 100
-    
+    jumping = 0
+    tick = 5
+    jumpingStatus = 0
+    jumpingStatusA = "False"
 end
 
 
@@ -25,6 +30,8 @@ function love.update(dt)
     playerImage = walkimages[1]
     playerImage:setFilter("nearest","nearest")
     playerHeight = playerImage:getHeight()*3
+    
+    -- left and right movement
     if love.keyboard.isDown("a") then
         playerX = playerX - playerWalkSpeed*dt
         playerImage = walkAna("Left",dt)
@@ -35,9 +42,43 @@ function love.update(dt)
         playerHeight = playerImage:getHeight()*3
     end
 
+    -- jumping + ana
+    if love.keyboard.isDown("w") and jumpcd == 0 or jumpingStatusA == "True"  then
+        local detail = 25
+        if jumpingStatus > detail then
+            jumpingStatus = 0
+            print(jumpingStatus)
+            print("> 199")
+            jumpingStatusA = "False"
+            jumping = 0
 
-    if  groundY > playerHeight+playerY-25 then
-        playerY = playerY+100*dt
+        elseif jumpingStatus <= detail then
+            playerY = playerY - 4
+            jumpingAna()
+            print(jumpingStatus)
+            print(" <= 199")
+            jumpingStatusA = "True"
+            jumping = 1
+        end
+        tick = 0
+        jumpcd = 1
+    else 
+        jumping = 0
+        jumpingStatusA = "False"
+
+    end
+
+
+    -- gravity 
+    if  groundY > playerHeight+playerY-25 and jumping == 0 then
+        tick = tick + 30*dt
+        playerY = playerY+((math.floor(tick)^2)+100)*dt
+        failing = 1
+        playerImage = fallingimage
+    elseif not(groundY > playerHeight+playerY-25) then
+        jumpcd = 0
+    else
+        failing = 0
     end
 
 end
@@ -77,4 +118,11 @@ function walkAna(Direction,dt)
     local image = walkimages[math.floor(RcurrentFrame)]
     image:setFilter("nearest","nearest")
     return image
+end
+
+
+function jumpingAna()
+    love.draw()
+    jumpingStatus = jumpingStatus+1
+
 end
