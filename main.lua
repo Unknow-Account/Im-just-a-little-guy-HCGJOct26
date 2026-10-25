@@ -5,8 +5,19 @@ function love.load()
         love.graphics.newImage("assets/walk1.png"),
         love.graphics.newImage("assets/walk2.png")
     }
+
     fallingimage = love.graphics.newImage("assets/falling.png")
     fallingimage:setFilter("nearest","nearest")
+
+    ballonimages = {
+        love.graphics.newImage("assets/ballon/blue.png"),
+        love.graphics.newImage("assets/ballon/green.png"),
+        love.graphics.newImage("assets/ballon/red.png"),
+        love.graphics.newImage("assets/ballon/yellow.png")
+    }
+
+
+
     bgg = love.graphics.newImage("assets/bg1.png")
     bgg:setFilter("nearest","nearest")
     groundY = love.graphics.getHeight()- bgg:getHeight()*3
@@ -21,6 +32,10 @@ function love.load()
     tick = 5
     jumpingStatus = 0
     jumpingStatusA = "False"
+    ballonTimer = 5
+    ballonDraw = 0
+    ballonY = 0
+    ballonDrawS = 0
 end
 
 
@@ -47,16 +62,12 @@ function love.update(dt)
         local detail = 25
         if jumpingStatus > detail then
             jumpingStatus = 0
-            print(jumpingStatus)
-            print("> 199")
             jumpingStatusA = "False"
             jumping = 0
 
         elseif jumpingStatus <= detail then
             playerY = playerY - 4
             jumpingAna()
-            print(jumpingStatus)
-            print(" <= 199")
             jumpingStatusA = "True"
             jumping = 1
         end
@@ -69,7 +80,7 @@ function love.update(dt)
     end
 
 
-    -- gravity 
+    -- Player gravity 
     if  groundY > playerHeight+playerY-25 and jumping == 0 then
         tick = tick + 30*dt
         playerY = playerY+((math.floor(tick)^2)+100)*dt
@@ -81,7 +92,33 @@ function love.update(dt)
         failing = 0
     end
 
+
+
+    --ballon stuff
+    
+    if ballonTimer >= 5 then
+        ballonTimer = 0
+        ballonTableNumber = love.math.random(1,4)
+        ballonTableX = love.math.random(10,800)
+        ballonImage = ballonimages[ballonTableNumber]
+        ballonImage:setFilter("nearest","nearest")
+        ballonDrawS = 1
+        ballonY = 0
+    else
+        ballonTimer = ballonTimer + dt
+    end
+    -- ballon go down
+    ballonY = ballonY+40*dt
+
+
+
+    -- touching check 
+
+
+
+
 end
+
 
 
 function love.draw()
@@ -91,8 +128,11 @@ function love.draw()
 
     love.graphics.draw(bgg,0,bgg:getHeight(),0,5,5)
     love.graphics.draw(bgg,320,bgg:getHeight(),0,5,5)
-end
 
+    if ballonDrawS == 1 then
+        love.graphics.draw(ballonImage,ballonTableX,ballonY,0,3,3)
+    end
+end
 
 
 
@@ -126,3 +166,5 @@ function jumpingAna()
     jumpingStatus = jumpingStatus+1
 
 end
+
+
