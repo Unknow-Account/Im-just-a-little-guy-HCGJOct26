@@ -36,6 +36,9 @@ function love.load()
     ballonDraw = 0
     ballonY = 0
     ballonDrawS = 0
+    ballonDestory = 0
+
+    score = 0
 end
 
 
@@ -45,16 +48,19 @@ function love.update(dt)
     playerImage = walkimages[1]
     playerImage:setFilter("nearest","nearest")
     playerHeight = playerImage:getHeight()*3
+    playerWidth = playerImage:getWidth()*3
     
     -- left and right movement
     if love.keyboard.isDown("a") then
         playerX = playerX - playerWalkSpeed*dt
         playerImage = walkAna("Left",dt)
         playerHeight = playerImage:getHeight()*3
+        playerWidth = playerImage:getWidth()*3
     elseif love.keyboard.isDown("d") then
         playerX=playerX+playerWalkSpeed*dt
         playerImage = walkAna("Right",dt)
         playerHeight = playerImage:getHeight()*3
+        playerWidth = playerImage:getWidth()*3
     end
 
     -- jumping + ana
@@ -107,27 +113,59 @@ function love.update(dt)
     else
         ballonTimer = ballonTimer + dt
     end
+
+    if ballonDestory == 1 then
+        ballonDrawS = 0
+        ballonTimer = 6
+    end
     -- ballon go down
     ballonY = ballonY+40*dt
 
 
 
     -- touching check 
+    playerTopY = playerY
+    playerBottomY = playerY + playerHeight
+    playerLeftX = playerX
+    playerRightX = playerX + playerWidth
 
+    ballonbottomY = ballonY
+    ballonTopY = ballonY+ballonImage:getHeight()*2
+    ballonRightX = ballonTableX+30
+    ballonLeftX = ballonTableX + ballonImage:getWidth()+30
 
-
-
+    touching = checkTouch(playerTopY,playerRightX,playerBottomY,playerLeftX,ballonTopY,ballonRightX,ballonbottomY,ballonLeftX)
+    if touching == true then
+        ballonDestory = 1
+        ballonDrawS = 0
+        score = score + 1
+    else
+        ballonDestory = 0
+    end
 end
 
 
 
 function love.draw()
-
     love.graphics.rectangle("fill",0,0,800,800)
     love.graphics.draw(playerImage,playerX,playerY,0,3,3)
 
     love.graphics.draw(bgg,0,bgg:getHeight(),0,5,5)
     love.graphics.draw(bgg,320,bgg:getHeight(),0,5,5)
+
+    --player 
+    --love.graphics.rectangle("fill",playerLeftX,playerTopY,10,10)
+    --love.graphics.rectangle("fill",playerLeftX,playerBottomY,10,10)
+    --love.graphics.rectangle("fill",playerRightX,playerTopY,10,10)
+    --love.graphics.rectangle("fill",playerRightX,playerBottomY,10,10)
+
+    --ballon
+    --love.graphics.rectangle("line",ballonLeftX,ballonTopY,10,10)
+    --love.graphics.rectangle("line",ballonLeftX,ballonbottomY,10,10)
+    --love.graphics.rectangle("fill",ballonRightX,ballonTopY,10,10)
+    --love.graphics.rectangle("fill",ballonRightX,ballonbottomY,10,10)
+
+    love.graphics.print(score,20,500,0,3,3)
 
     if ballonDrawS == 1 then
         love.graphics.draw(ballonImage,ballonTableX,ballonY,0,3,3)
@@ -168,3 +206,11 @@ function jumpingAna()
 end
 
 
+function checkTouch(T,R,B,L,T2,R2,B2,L2)
+
+    if R > L2 and L < R2 and B > T2 and T < B2 then
+        return true
+    end
+
+
+end
