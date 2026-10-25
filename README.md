@@ -12,6 +12,11 @@ Get. Ballons.
 A and D to move left and right
 W to jump AND to get the ballon
 
+
+# Install
+Just open main.html for web version
+If there is a exe just open it.
+
 # Creds/misc
 
 Made with love2d (the best)
